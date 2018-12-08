@@ -1,3 +1,3 @@
 # spaceship-attack
 
-CIS 120 Final Project
+CIS 120 Final Game Project
