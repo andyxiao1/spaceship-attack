@@ -14,23 +14,24 @@ import javax.swing.*;
  */
 public class Game implements Runnable {
     public void run() {
-        // NOTE : recall that the 'final' keyword notes immutability even for local variables.
 
-        // Top-level frame in which game components live
-        // Be sure to change "TOP LEVEL FRAME" to the name of your game
-        final JFrame frame = new JFrame("TOP LEVEL FRAME");
+        final JFrame frame = new JFrame("Spaceship Attack");
         frame.setLocation(300, 300);
-
+        
         // Status panel
-        final JPanel status_panel = new JPanel();
-        frame.add(status_panel, BorderLayout.SOUTH);
-        final JLabel status = new JLabel("Running...");
-        status_panel.add(status);
-
+        final JPanel statusPanel = new JPanel();
+        frame.add(statusPanel, BorderLayout.NORTH);
+        final JLabel score = new JLabel("Score: ");
+        statusPanel.add(score);
+        final JLabel health = new JLabel("Health: ");
+        statusPanel.add(health);
+        
         // Main playing area
-        final GameCourt court = new GameCourt(status);
+        final SpaceGameCourt court = new SpaceGameCourt(health, score);
+        //final GameCourt court = new GameCourt(health);
         frame.add(court, BorderLayout.CENTER);
 
+        /*
         // Reset button
         final JPanel control_panel = new JPanel();
         frame.add(control_panel, BorderLayout.NORTH);
@@ -45,6 +46,7 @@ public class Game implements Runnable {
             }
         });
         control_panel.add(reset);
+        */
 
         // Put the frame on the screen
         frame.pack();
@@ -57,7 +59,7 @@ public class Game implements Runnable {
 
     /**
      * Main method run to start and run the game. Initializes the GUI elements specified in Game and
-     * runs it. IMPORTANT: Do NOT delete! You MUST include this in your final submission.
+     * runs it.
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Game());

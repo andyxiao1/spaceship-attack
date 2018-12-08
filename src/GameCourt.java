@@ -19,8 +19,8 @@ import javax.swing.*;
 public class GameCourt extends JPanel {
 
     // the state of the game logic
-    private Square square; // the Black Square, keyboard control
-    private Circle snitch; // the Golden Snitch, bounces
+    private Spaceship square; // the Black Square, keyboard control
+    private Asteroid snitch; // the Golden Snitch, bounces
     private Poison poison; // the Poison Mushroom, doesn't move
 
     public boolean playing = false; // whether the game is running 
@@ -82,9 +82,9 @@ public class GameCourt extends JPanel {
      * (Re-)set the game to its initial state.
      */
     public void reset() {
-        square = new Square(COURT_WIDTH, COURT_HEIGHT, Color.BLACK);
+        square = new Spaceship(COURT_WIDTH, COURT_HEIGHT, Color.BLACK);
         poison = new Poison(COURT_WIDTH, COURT_HEIGHT);
-        snitch = new Circle(COURT_WIDTH, COURT_HEIGHT, Color.YELLOW);
+        snitch = new Asteroid(COURT_WIDTH, COURT_HEIGHT, Color.YELLOW);
 
         playing = true;
         status.setText("Running...");

@@ -12,15 +12,9 @@ import java.awt.Graphics;
  * Game objects exist in the game court. They have a position, velocity, size and bounds. Their
  * velocity controls how they move; their position should always be within their bounds.
  */
-public abstract class GameObj {
-    /*
-     * Current position of the object (in terms of graphics coordinates)
-     *  
-     * Coordinates are given by the upper-left hand corner of the object. This position should
-     * always be within bounds.
-     *  0 <= px <= maxX 
-     *  0 <= py <= maxY 
-     */
+public abstract class FlyingObj {
+    
+    /* Current position of the object (in terms of graphics coordinates) */
     private int px; 
     private int py;
 
@@ -42,7 +36,7 @@ public abstract class GameObj {
     /**
      * Constructor
      */
-    public GameObj(int vx, int vy, int px, int py, int width, int height, int courtWidth,
+    public FlyingObj(int vx, int vy, int px, int py, int width, int height, int courtWidth,
         int courtHeight) {
         this.vx = vx;
         this.vy = vy;
@@ -132,7 +126,7 @@ public abstract class GameObj {
      * @param that The other object
      * @return Whether this object intersects the other object.
      */
-    public boolean intersects(GameObj that) {
+    public boolean intersects(FlyingObj that) {
         return (this.px + this.width >= that.px
             && this.py + this.height >= that.py
             && that.px + that.width >= this.px 
@@ -150,7 +144,7 @@ public abstract class GameObj {
      * @param that The other object
      * @return Whether an intersection will occur.
      */
-    public boolean willIntersect(GameObj that) {
+    public boolean willIntersect(FlyingObj that) {
         int thisNextX = this.px + this.vx;
         int thisNextY = this.py + this.vy;
         int thatNextX = that.px + that.vx;
@@ -217,7 +211,7 @@ public abstract class GameObj {
      * @param that The other object
      * @return Direction of impending object, null if all clear.
      */
-    public Direction hitObj(GameObj that) {
+    public Direction hitObj(FlyingObj that) {
         if (this.willIntersect(that)) {
             double dx = that.px + that.width / 2 - (this.px + this.width / 2);
             double dy = that.py + that.height / 2 - (this.py + this.height / 2);

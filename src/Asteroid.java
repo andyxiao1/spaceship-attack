@@ -10,17 +10,17 @@ import java.awt.*;
  * A basic game object starting in the upper left corner of the game court. It is displayed as a
  * circle of a specified color.
  */
-public class Circle extends GameObj {
+public class Asteroid extends FlyingObj {
     public static final int SIZE = 20;
     public static final int INIT_POS_X = 170;
-    public static final int INIT_POS_Y = 170;
-    public static final int INIT_VEL_X = 2;
+    public static final int INIT_POS_Y = 0;
+    public static final int INIT_VEL_X = 0;
     public static final int INIT_VEL_Y = 3;
 
     private Color color;
 
-    public Circle(int courtWidth, int courtHeight, Color color) {
-        super(INIT_VEL_X, INIT_VEL_Y, INIT_POS_X, INIT_POS_Y, SIZE, SIZE, courtWidth, courtHeight);
+    public Asteroid(int px, int py, int courtWidth, int courtHeight, Color color) {
+        super(INIT_VEL_X, INIT_VEL_Y, px, py, SIZE, SIZE, courtWidth, courtHeight);
 
         this.color = color;
     }
