@@ -26,6 +26,7 @@ public class SpaceGameCourt extends JPanel {
     private Spaceship ship;
     private List<CollisionProjectile> projectilesOnScreen;
     private Queue<CollisionProjectile> remainingProjectiles;
+    private List<Laser> userLasers;
 
     public boolean playing = false;
     private JLabel health;
@@ -93,6 +94,7 @@ public class SpaceGameCourt extends JPanel {
     public void reset() {
         projectilesOnScreen = new LinkedList<CollisionProjectile>();
         remainingProjectiles = new LinkedList<CollisionProjectile>();
+        userLasers = new LinkedList<Laser>();
         loadProjectiles();
         ship = new Spaceship(COURT_WIDTH, COURT_HEIGHT, Color.RED, this);
         playing = true;
@@ -111,19 +113,42 @@ public class SpaceGameCourt extends JPanel {
             
             ship.move();
             for (int i = 0; i < projectilesOnScreen.size(); i++) {
-                
                 CollisionProjectile nextProj = projectilesOnScreen.get(i);
-                
                 nextProj.move();
+                
                 if (nextProj.collidesWith(ship)) {
-                    nextProj.collisionEffect(ship);
+                    nextProj.hitShip(ship);
                     projectilesOnScreen.remove(i);
                     i--;
-                    if (ship.getHealth() == 0) {
-                        playing = false;
-                    }
+                    playing = !ship.isDead();
                 } else if (nextProj.finishedCourse()) {
                     projectilesOnScreen.remove(i);
+                    i--;
+                }
+            }
+
+            for (int i = 0; i < userLasers.size(); i++) {
+                Laser nextLaser = userLasers.get(i);
+                nextLaser.move();
+                
+                for (int j = 0; j < projectilesOnScreen.size(); j++) {
+                    CollisionProjectile nextProj = projectilesOnScreen.get(j);
+
+                    if (nextProj instanceof Damageable && nextProj.collidesWith(nextLaser)) {
+                        Damageable proj = (Damageable) nextProj;
+                        nextLaser.hitProjectile(proj);
+                        
+                        if (proj.isDead()) {
+                            projectilesOnScreen.remove(j);
+                            j--;
+                        }
+                        userLasers.remove(i);
+                        i--;
+                    }
+                }
+                
+                if (nextLaser.finishedCourse()) {
+                    userLasers.remove(i);
                     i--;
                 }
             }
@@ -140,8 +165,12 @@ public class SpaceGameCourt extends JPanel {
         }
     }
     
-    public void addProjectile(CollisionProjectile p) {
-        projectilesOnScreen.add(p);
+    public void addEnemyLaser(Laser l) {
+        projectilesOnScreen.add(l);
+    }
+    
+    public void addUserLaser(Laser l) {
+        userLasers.add(l);
     }
 
     @Override
@@ -149,6 +178,10 @@ public class SpaceGameCourt extends JPanel {
         super.paintComponent(g);
         ship.draw(g);
         for (CollisionProjectile nextProjectile : projectilesOnScreen) {
+            nextProjectile.draw(g);
+        }
+        
+        for (CollisionProjectile nextProjectile : userLasers) {
             nextProjectile.draw(g);
         }
         

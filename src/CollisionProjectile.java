@@ -1,5 +1,5 @@
 
-public abstract class CollisionProjectile extends FlyingProjectile{
+public abstract class CollisionProjectile extends FlyingObj{
     
     private int collisionDamage;
     
@@ -9,7 +9,8 @@ public abstract class CollisionProjectile extends FlyingProjectile{
         this.collisionDamage = dmg;
     }
     
-    public void collisionEffect(Spaceship ship) {
-        ship.dealDamage(collisionDamage);
-    }    
+    public void hitShip(Spaceship ship) {
+        ship.takeDamage(collisionDamage);
+    }
+    
 }

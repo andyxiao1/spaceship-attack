@@ -12,7 +12,7 @@ import java.awt.Graphics;
  * Game objects exist in the game court. They have a position, velocity, size and bounds. Their
  * velocity controls how they move; their position should always be within their bounds.
  */
-public abstract class FlyingProjectile {
+public abstract class FlyingObj {
     
     /* Current position of the object (in terms of graphics coordinates) */
     private int px; 
@@ -32,11 +32,11 @@ public abstract class FlyingProjectile {
      */
     private int maxX;
     private int maxY;
-
+    
     /**
      * Constructor
      */
-    public FlyingProjectile(int vx, int vy, int px, int py, int width, int height, int courtWidth,
+    public FlyingObj(int vx, int vy, int px, int py, int width, int height, int courtWidth,
         int courtHeight) {
         this.vx = vx;
         this.vy = vy;
@@ -126,7 +126,7 @@ public abstract class FlyingProjectile {
      * @param that The other object
      * @return Whether this object collides with the other object.
      */
-    public boolean collidesWith(FlyingProjectile that) {
+    public boolean collidesWith(FlyingObj that) {
         return (this.px + this.width >= that.px
             && this.py + this.height >= that.py
             && that.px + that.width >= this.px 
