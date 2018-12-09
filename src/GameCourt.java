@@ -103,15 +103,15 @@ public class GameCourt extends JPanel {
             snitch.move();
 
             // make the snitch bounce off walls...
-            snitch.bounce(snitch.hitWall());
+            snitch.bounce(snitch.finishedCourse());
             // ...and the mushroom
             snitch.bounce(snitch.hitObj(poison));
 
             // check for the game end conditions
-            if (square.intersects(poison)) {
+            if (square.collidesWith(poison)) {
                 playing = false;
                 status.setText("You lose!");
-            } else if (square.intersects(snitch)) {
+            } else if (square.collidesWith(snitch)) {
                 playing = false;
                 status.setText("You win!");
             }

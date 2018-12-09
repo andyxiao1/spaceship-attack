@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
  * efficiency: your program will go very slowly if you try to create a new BufferedImage every time
  * the draw method is invoked.
  */
-public class Poison extends FlyingObj {
+public class Poison extends FlyingProjectile {
     public static final String IMG_FILE = "files/poison.png";
     public static final int SIZE = 40;
     public static final int INIT_POS_X = 130;

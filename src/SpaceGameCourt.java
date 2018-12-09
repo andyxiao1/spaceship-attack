@@ -24,11 +24,12 @@ public class SpaceGameCourt extends JPanel {
     
     // the state of the game logic
     private Spaceship ship;
-    private List<Asteroid> asteroids;
+    private List<CollisionProjectile> projectilesOnScreen;
+    private Queue<CollisionProjectile> remainingProjectiles;
 
     public boolean playing = false;
     private JLabel health;
-    private JLabel score;
+    private JLabel coins;
 
     // Game constants
     public static final int COURT_WIDTH = 300;
@@ -38,7 +39,7 @@ public class SpaceGameCourt extends JPanel {
     // Update interval for timer, in milliseconds
     public static final int INTERVAL = 35;
 
-    public SpaceGameCourt(JLabel health, JLabel score) {
+    public SpaceGameCourt(JLabel health, JLabel coins) {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         // setup timer
@@ -48,13 +49,15 @@ public class SpaceGameCourt extends JPanel {
             }
         });
         timer.start();
-        
-        Timer asteroidTimer = new Timer(1000, new ActionListener() {
+                
+        Timer projTimer = new Timer(333, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                asteroids.add(new Asteroid(50, 0, COURT_WIDTH, COURT_HEIGHT, Color.BLACK));
+                if (!remainingProjectiles.isEmpty()) {
+                    projectilesOnScreen.add(remainingProjectiles.remove());
+                }
             }
         });
-        asteroidTimer.start();
+        projTimer.start();
 
         // setup keyboard functionality
         setFocusable(true);
@@ -68,6 +71,8 @@ public class SpaceGameCourt extends JPanel {
                     ship.setVy(SHIP_VELOCITY);
                 } else if (e.getKeyCode() == KeyEvent.VK_UP) {
                     ship.setVy(-SHIP_VELOCITY);
+                } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    ship.fire();
                 }
             }
 
@@ -79,18 +84,18 @@ public class SpaceGameCourt extends JPanel {
 
         // initialize state
         this.health = health;
-        this.score = score;
+        this.coins = coins;
     }
 
     /**
      * (Re-)set the game to its initial state.
      */
     public void reset() {
-        asteroids = new LinkedList<Asteroid>();
-        ship = new Spaceship(COURT_WIDTH, COURT_HEIGHT, Color.RED);
+        projectilesOnScreen = new LinkedList<CollisionProjectile>();
+        remainingProjectiles = new LinkedList<CollisionProjectile>();
+        loadProjectiles();
+        ship = new Spaceship(COURT_WIDTH, COURT_HEIGHT, Color.RED, this);
         playing = true;
-        updateHealthLabel();
-        score.setText("Score: 0");
 
         requestFocusInWindow();
     }
@@ -100,21 +105,26 @@ public class SpaceGameCourt extends JPanel {
      */
     void tick() {
         if (playing) {
+            if (projectilesOnScreen.isEmpty() && remainingProjectiles.isEmpty()) {
+                playing = false;
+            }
+            
             ship.move();
-            for (Iterator<Asteroid> iterator = asteroids.iterator(); iterator.hasNext();) {
+            for (int i = 0; i < projectilesOnScreen.size(); i++) {
                 
-                Asteroid nextAsteroid = iterator.next();
+                CollisionProjectile nextProj = projectilesOnScreen.get(i);
                 
-                nextAsteroid.move();
-                if (nextAsteroid.intersects(ship)) {
-                    ship.takeDamage(10);
-                    updateHealthLabel();
-                    iterator.remove();
+                nextProj.move();
+                if (nextProj.collidesWith(ship)) {
+                    nextProj.collisionEffect(ship);
+                    projectilesOnScreen.remove(i);
+                    i--;
                     if (ship.getHealth() == 0) {
                         playing = false;
                     }
-                } else if (nextAsteroid.hitWall() != null) {
-                    iterator.remove();
+                } else if (nextProj.finishedCourse()) {
+                    projectilesOnScreen.remove(i);
+                    i--;
                 }
             }
             
@@ -122,17 +132,28 @@ public class SpaceGameCourt extends JPanel {
         }
     }
     
-    private void updateHealthLabel() {
-        health.setText("Health: " + ship.getHealth() + "/" + ship.MAX_HEALTH);
+    public void loadProjectiles() {
+        for (int i = 0; i < 20; i++) {
+            remainingProjectiles.add(new Asteroid(COURT_WIDTH, COURT_HEIGHT));
+            remainingProjectiles.add(new EnemyShip(COURT_WIDTH, COURT_HEIGHT, this));
+            remainingProjectiles.add(new Coin(COURT_WIDTH, COURT_WIDTH));
+        }
+    }
+    
+    public void addProjectile(CollisionProjectile p) {
+        projectilesOnScreen.add(p);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         ship.draw(g);
-        for (Asteroid nextAsteroid : asteroids) {
-            nextAsteroid.draw(g);
+        for (CollisionProjectile nextProjectile : projectilesOnScreen) {
+            nextProjectile.draw(g);
         }
+        
+        health.setText("Health: " + ship.getHealth() + "/" + ship.MAX_HEALTH);
+        coins.setText("Coins: " + ship.getCoins());
     }
 
     @Override

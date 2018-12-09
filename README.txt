@@ -30,12 +30,12 @@ TODO:
     - game status bar on top w/ score, health, pause?
 - hiearchy - current thoughts
     - FlyingObj - abstract class that allows obj to moves and collide
-    - Attackable interface/abstract class - extends FlyingObj, has health, does damage on collide
+    - Attackable interface/abstract class - extends FlyingObj, has health, does damage on collide //dont neeed???
     - Shootable - shoots lasers 
     - SpaceShip - user ship that shoots, has health
     - Enemy - enemy ships that shoot, have health
     - Asteroid - rock in space that does dmg on collide
-    - Coin - doesn't do damage, adds one
+    - Coin - doesn't do damage, adds one // dont think about coins for simple game implementation
     - Laser - high velocity, does dmg on collide
 - simple game
     - list of all FlyingObj to be deployed

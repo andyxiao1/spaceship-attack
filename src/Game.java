@@ -21,13 +21,13 @@ public class Game implements Runnable {
         // Status panel
         final JPanel statusPanel = new JPanel();
         frame.add(statusPanel, BorderLayout.NORTH);
-        final JLabel score = new JLabel("Score: ");
-        statusPanel.add(score);
+        final JLabel coins = new JLabel("Coins: ");
+        statusPanel.add(coins);
         final JLabel health = new JLabel("Health: ");
         statusPanel.add(health);
         
         // Main playing area
-        final SpaceGameCourt court = new SpaceGameCourt(health, score);
+        final SpaceGameCourt court = new SpaceGameCourt(health, coins);
         //final GameCourt court = new GameCourt(health);
         frame.add(court, BorderLayout.CENTER);
 
