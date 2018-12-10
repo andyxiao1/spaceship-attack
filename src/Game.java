@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.io.*;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,7 +53,7 @@ public class Game implements Runnable {
         }
         
         // loads instructions
-        instructions = new LinkedList<String>();
+        instructions = new ArrayList<String>();
         BufferedReader br = null;
         
         try {

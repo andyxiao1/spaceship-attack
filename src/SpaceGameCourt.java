@@ -99,9 +99,9 @@ public class SpaceGameCourt extends JPanel {
      * sets the game to its initial state.
      */
     public void startGame() {
-        projectilesOnScreen = new LinkedList<CollisionProjectile>();
+        projectilesOnScreen = new ArrayList<CollisionProjectile>();
         remainingProjectiles = LevelReader.getLevel(level, this);
-        userLasers = new LinkedList<Laser>();
+        userLasers = new ArrayList<Laser>();
         ship = new Spaceship(this);
         playing = true;
 

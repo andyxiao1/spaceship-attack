@@ -25,7 +25,7 @@ public class HighScoreKeeper {
      */
     private void loadScores() {
         BufferedReader br = null;
-        highScores = new LinkedList<HighScore>();
+        highScores = new ArrayList<HighScore>();
         
         try {
             br = new BufferedReader(new FileReader(HIGHSCORE_FILE));
