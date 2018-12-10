@@ -64,4 +64,11 @@ public class EnemyShip extends CollisionProjectile implements Damageable {
         g.setColor(ENEMY_COLOR);
         g.fillOval(getPx(), getPy(), getWidth(), getHeight());
     }
+
+    /**
+     * gettter for health
+     */
+    public int getHealth() {
+        return health;
+    }
 }

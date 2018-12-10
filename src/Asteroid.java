@@ -36,4 +36,11 @@ public class Asteroid extends CollisionProjectile implements Damageable {
         g.setColor(ASTEROID_COLOR);
         g.fillOval(getPx(), getPy(), getWidth(), getHeight());
     }
+
+    /**
+     * getter for health
+     */
+    public int getHealth() {
+        return health;
+    }
 }
