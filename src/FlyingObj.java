@@ -1,9 +1,3 @@
-/**
- * CIS 120 Game HW
- * (c) University of Pennsylvania
- * @version 2.1, Apr 2017
- */
-
 import java.awt.Graphics;
 
 /** 
@@ -36,8 +30,7 @@ public abstract class FlyingObj {
     /**
      * Constructor
      */
-    public FlyingObj(int vx, int vy, int px, int py, int width, int height, int courtWidth,
-        int courtHeight) {
+    public FlyingObj(int vx, int vy, int px, int py, int width, int height) {
         this.vx = vx;
         this.vy = vy;
         this.px = px;
@@ -47,8 +40,8 @@ public abstract class FlyingObj {
 
         // take the width and height into account when setting the bounds for the upper left corner
         // of the object.
-        this.maxX = courtWidth - width;
-        this.maxY = courtHeight - height;
+        this.maxX = SpaceGameCourt.COURT_WIDTH - width;
+        this.maxY = SpaceGameCourt.COURT_HEIGHT - height;
     }
 
     /*** GETTERS **********************************************************************************/

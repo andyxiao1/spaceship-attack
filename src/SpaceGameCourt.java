@@ -1,11 +1,7 @@
-/**
- * CIS 120 Game HW
- * (c) University of Pennsylvania
- * @version 2.1, Apr 2017
- */
-
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
+
 import javax.swing.*;
 import java.util.*;
 import java.util.List;
@@ -21,6 +17,18 @@ import javax.swing.Timer;
  */
 @SuppressWarnings("serial")
 public class SpaceGameCourt extends JPanel {
+
+    // Game constants
+    public static final int COURT_WIDTH = 300;
+    public static final int COURT_HEIGHT = 350;
+    public static final int SHIP_VELOCITY = 4;
+    public static final int ENEMY_LASER_SPEED = 7;
+    public static final Color ENEMY_LASER_COLOR = Color.RED;
+    public static final int USER_LASER_SPEED = -7;
+    public static final Color USER_LASER_COLOR = Color.GREEN;
+
+    public static final int TICK_INTERVAL = 35;
+    public static final int PROJECTILE_INTERVAL = 400;
     
     // the state of the game logic
     private Spaceship ship;
@@ -31,27 +39,24 @@ public class SpaceGameCourt extends JPanel {
     public boolean playing = false;
     private JLabel health;
     private JLabel coins;
+    private int level;
+    private Game game;
+    
+    private Timer gameTimer;
+    private Timer projTimer;
 
-    // Game constants
-    public static final int COURT_WIDTH = 300;
-    public static final int COURT_HEIGHT = 300;
-    public static final int SHIP_VELOCITY = 4;
-
-    // Update interval for timer, in milliseconds
-    public static final int INTERVAL = 35;
-
-    public SpaceGameCourt(JLabel health, JLabel coins) {
+    public SpaceGameCourt(JLabel health, JLabel coins, int level, Game game) {
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        // setup timer
-        Timer timer = new Timer(INTERVAL, new ActionListener() {
+        // setup timers
+        gameTimer = new Timer(TICK_INTERVAL, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tick();
             }
         });
-        timer.start();
+        gameTimer.start();
                 
-        Timer projTimer = new Timer(333, new ActionListener() {
+        projTimer = new Timer(PROJECTILE_INTERVAL, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (!remainingProjectiles.isEmpty()) {
                     projectilesOnScreen.add(remainingProjectiles.remove());
@@ -86,17 +91,18 @@ public class SpaceGameCourt extends JPanel {
         // initialize state
         this.health = health;
         this.coins = coins;
+        this.level = level;
+        this.game = game;
     }
 
     /**
-     * (Re-)set the game to its initial state.
+     * sets the game to its initial state.
      */
-    public void reset() {
+    public void startGame() {
         projectilesOnScreen = new LinkedList<CollisionProjectile>();
-        remainingProjectiles = new LinkedList<CollisionProjectile>();
+        remainingProjectiles = LevelReader.getLevel(level, this);
         userLasers = new LinkedList<Laser>();
-        loadProjectiles();
-        ship = new Spaceship(COURT_WIDTH, COURT_HEIGHT, Color.RED, this);
+        ship = new Spaceship(this);
         playing = true;
 
         requestFocusInWindow();
@@ -109,83 +115,126 @@ public class SpaceGameCourt extends JPanel {
         if (playing) {
             if (projectilesOnScreen.isEmpty() && remainingProjectiles.isEmpty()) {
                 playing = false;
+                gameOver(true);
             }
             
             ship.move();
-            for (int i = 0; i < projectilesOnScreen.size(); i++) {
-                CollisionProjectile nextProj = projectilesOnScreen.get(i);
-                nextProj.move();
-                
-                if (nextProj.collidesWith(ship)) {
-                    nextProj.hitShip(ship);
-                    projectilesOnScreen.remove(i);
-                    i--;
-                    playing = !ship.isDead();
-                } else if (nextProj.finishedCourse()) {
-                    projectilesOnScreen.remove(i);
-                    i--;
-                }
-            }
-
-            for (int i = 0; i < userLasers.size(); i++) {
-                Laser nextLaser = userLasers.get(i);
-                nextLaser.move();
-                
-                for (int j = 0; j < projectilesOnScreen.size(); j++) {
-                    CollisionProjectile nextProj = projectilesOnScreen.get(j);
-
-                    if (nextProj instanceof Damageable && nextProj.collidesWith(nextLaser)) {
-                        Damageable proj = (Damageable) nextProj;
-                        nextLaser.hitProjectile(proj);
-                        
-                        if (proj.isDead()) {
-                            projectilesOnScreen.remove(j);
-                            j--;
-                        }
-                        userLasers.remove(i);
-                        i--;
-                    }
-                }
-                
-                if (nextLaser.finishedCourse()) {
-                    userLasers.remove(i);
-                    i--;
-                }
-            }
+            updateProjectilesOnScreen();
+            updateUserLasers();
             
             repaint();
         }
     }
     
-    public void loadProjectiles() {
-        for (int i = 0; i < 20; i++) {
-            remainingProjectiles.add(new Asteroid(COURT_WIDTH, COURT_HEIGHT));
-            remainingProjectiles.add(new EnemyShip(COURT_WIDTH, COURT_HEIGHT, this));
-            remainingProjectiles.add(new Coin(COURT_WIDTH, COURT_WIDTH));
+    /**
+     * Called by tick(), moves projectiles on screen and implements proper game logic
+     */
+    private void updateProjectilesOnScreen() {
+        for (int i = 0; i < projectilesOnScreen.size(); i++) {
+            CollisionProjectile nextProj = projectilesOnScreen.get(i);
+            nextProj.move();
+            
+            if (nextProj.collidesWith(ship)) {
+                nextProj.hitShip(ship);
+                projectilesOnScreen.remove(i);
+                i--;
+                if (ship.isDead()) {
+                    playing = false;
+                    gameOver(false);
+                }
+            } else if (nextProj.finishedCourse()) {
+                projectilesOnScreen.remove(i);
+                i--;
+            }
         }
     }
     
-    public void addEnemyLaser(Laser l) {
-        projectilesOnScreen.add(l);
+    /**
+     * Called by tick(), moves user lasers and implements proper game logic
+     */
+    public void updateUserLasers() {
+        for (int i = 0; i < userLasers.size(); i++) {
+            Laser nextLaser = userLasers.get(i);
+            nextLaser.move();
+            
+            for (int j = 0; j < projectilesOnScreen.size(); j++) {
+                CollisionProjectile nextProj = projectilesOnScreen.get(j);
+
+                if (nextProj instanceof Damageable && nextProj.collidesWith(nextLaser)) {
+                    Damageable proj = (Damageable) nextProj;
+                    nextLaser.hitProjectile(proj);
+                    
+                    if (proj.isDead()) {
+                        projectilesOnScreen.remove(j);
+                        j--;
+                    }
+                    userLasers.remove(i);
+                    i--;
+                }
+            }
+            
+            if (nextLaser.finishedCourse()) {
+                userLasers.remove(i);
+                i--;
+            }
+        }
     }
     
-    public void addUserLaser(Laser l) {
-        userLasers.add(l);
+    /**
+     * ends game by stopping timers, outputs whether or not they won, and checks if high score
+     * @param didWin
+     */
+    public void gameOver(boolean didWin) {
+        gameTimer.stop();
+        projTimer.stop();
+        
+        String output = (didWin ? "You Won!" : "You Lost :(") + "\nCoins: " + ship.getCoins();
+
+        if (level == 3) {
+            //TODO check highscore, update, ask for name
+        } else {
+            JOptionPane.showMessageDialog(null, output);
+            game.showMenu();
+        }
+        
+        //JOptionPane.showMessageDialog(null, output);
+        //JOptionPane.showInputDialog("Name: ");
+    }
+    
+    /**
+     * adds enemy laser to projectiles on screen at specified location
+     * @param px
+     * @param py
+     */
+    public void addEnemyLaser(int px, int py) {
+        Laser toAdd = new Laser(px, py, ENEMY_LASER_SPEED, ENEMY_LASER_COLOR);
+        projectilesOnScreen.add(toAdd);
+    }
+    
+    /**
+     * adds user laser on screen at specified location
+     * @param px
+     * @param py
+     */
+    public void addUserLaser(int px, int py) {
+        Laser toAdd = new Laser(px, py, USER_LASER_SPEED, USER_LASER_COLOR);
+        userLasers.add(toAdd);
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         ship.draw(g);
+        
         for (CollisionProjectile nextProjectile : projectilesOnScreen) {
             nextProjectile.draw(g);
         }
         
-        for (CollisionProjectile nextProjectile : userLasers) {
-            nextProjectile.draw(g);
+        for (Laser nextLaser : userLasers) {
+            nextLaser.draw(g);
         }
         
-        health.setText("Health: " + ship.getHealth() + "/" + ship.MAX_HEALTH);
+        health.setText("Health: " + ship.getHealth() + "/" + Spaceship.MAX_HEALTH);
         coins.setText("Coins: " + ship.getCoins());
     }
 

@@ -1,64 +1,63 @@
-/**
- * CIS 120 Game HW
- * (c) University of Pennsylvania
- * @version 2.1, Apr 2017
- */
-
 import java.awt.*;
 
 /**
- * A basic game object starting in the upper left corner of the game court. It is displayed as a
- * square of a specified color.
+ * Spaceship
+ * 
+ * This class represents the users spaceship that can take damage and shoot lasers
  */
 public class Spaceship extends FlyingObj implements Damageable {
     public static final int SIZE = 20;
-    public static final int INIT_POS_X = 148;
-    public static final int INIT_POS_Y = 250;
+    public static final int INIT_POS_X = 140;
+    public static final int INIT_POS_Y = 270;
     public static final int INIT_VEL_X = 0;
     public static final int INIT_VEL_Y = 0;
-    public static final int INIT_COINS = 0;
     public static final int MAX_HEALTH = 200;
+    public static final Color SHIP_COLOR = Color.RED;
 
     private int coins;
-    private Color color;
     private SpaceGameCourt court;
-    private int courtWidth;
-    private int courtHeight;
     private int health;
     
-    /**
-    * Note that, because we don't need to do anything special when constructing a Square, we simply
-    * use the superclass constructor called with the correct parameters.
-    */
-    public Spaceship(int courtWidth, int courtHeight, Color color, SpaceGameCourt court) {
-        super(INIT_VEL_X, INIT_VEL_Y, INIT_POS_X, INIT_POS_Y, SIZE, SIZE, courtWidth, courtHeight);
+    public Spaceship(SpaceGameCourt court) {
+        super(INIT_VEL_X, INIT_VEL_Y, INIT_POS_X, INIT_POS_Y, SIZE, SIZE);
 
-        this.color = color;
-        this.coins = INIT_COINS;
+        this.coins = 0;
         this.court = court;
-        this.courtWidth = courtWidth;
-        this.courtHeight = courtHeight;
         this.health = MAX_HEALTH;
     }
     
+    /**
+     * shoots user laser at its current location
+     */
     public void fire() {
-        court.addUserLaser(new Laser(this.getPx() + 8, this.getPy() - 21, -7, courtWidth, courtHeight, Color.GREEN));
+        court.addUserLaser(getPx() + 8, getPy() - 21);
     }   
     
+    /**
+     * adds coinVal to the total coin count
+     * @param coinVal
+     */
+    public void addCoins(int coinVal) {
+        coins += coinVal;
+    }
+    
+    /**
+     * getter for health
+     */
     public int getHealth() {
         return health;
     }
     
-    public boolean isDead() {
-        return health == 0;
-    }
-    
+    /**
+     * getter for health
+     */
     public int getCoins() {
         return coins;
     }
     
-    public void addCoins(int coinVal) {
-        coins += coinVal;
+    @Override
+    public boolean isDead() {
+        return health == 0;
     }
     
     @Override
@@ -68,7 +67,7 @@ public class Spaceship extends FlyingObj implements Damageable {
     
     @Override
     public void draw(Graphics g) {
-        g.setColor(this.color);
-        g.fillRect(this.getPx(), this.getPy(), this.getWidth(), this.getHeight());
+        g.setColor(SHIP_COLOR);
+        g.fillRect(getPx(), getPy(), getWidth(), getHeight());
     }
 }

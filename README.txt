@@ -42,7 +42,16 @@ TODO:
     - list of current FlyingObj on screen
     - user ship
     - currently every 2 seconds 2 obj from deployed to on screen
-
+    
+    
+TODO:
+    - add instructions to menu
+    - fix game menu and game size
+    - add dialogue after game over - CHANGE SCREEN
+    - high scores
+    - levels from IO - DONE
+    - user data - coins, ships
+    
 - Provide an overview of each of the classes in your code, and what their
   function is in the overall game.
 

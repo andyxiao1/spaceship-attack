@@ -1,0 +1,30 @@
+ENEMY || 60 || 40
+ASTEROID || 40 || 20
+ASTEROID || 40 || 20
+ENEMY || 60 || 40
+ASTEROID || 40 || 20
+COIN || 1
+ASTEROID || 40 || 20
+ENEMY || 60 || 40
+ASTEROID || 40 || 20
+ASTEROID || 40 || 20
+COIN || 1
+ENEMY || 60 || 40
+COIN || 1
+COIN || 1
+ASTEROID || 40 || 20
+ASTEROID || 40 || 20
+COIN || 1
+ENEMY || 60 || 40
+ENEMY || 60 || 40
+ASTEROID || 40 || 20
+ASTEROID || 40 || 20
+ENEMY || 60 || 40
+COIN || 1
+COIN || 1
+ENEMY || 60 || 40
+ASTEROID || 40 || 20
+ASTEROID || 40 || 20
+ENEMY || 60 || 40
+COIN || 1
+ENEMY || 60 || 40
