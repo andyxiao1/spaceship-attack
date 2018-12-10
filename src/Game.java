@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Game Main class that specifies the frame and widgets of the GUI
@@ -16,7 +18,8 @@ public class Game implements Runnable {
     private JPanel container;
     private JFrame frame;
     private BufferedImage spaceship;
-    private String instructions;
+    private List<String> instructions;
+    private HighScoreKeeper scoreKeeper;
     
     public void run() {
 
@@ -37,9 +40,9 @@ public class Game implements Runnable {
     }
     
     /**
-     * Preloads spaceship picture and instructions
+     * Preloads spaceship picture, instructions, and highscores
      */
-    public void loadData() {
+    private void loadData() {
         
         // loads spaceship picture
         spaceship = null;
@@ -50,7 +53,7 @@ public class Game implements Runnable {
         }
         
         // loads instructions
-        instructions = "";
+        instructions = new LinkedList<String>();
         BufferedReader br = null;
         
         try {
@@ -58,7 +61,7 @@ public class Game implements Runnable {
             String line = br.readLine();
             
             while (line != null) {
-                instructions += "\n" + line;
+                instructions.add(line);
                 line = br.readLine();
             }
             
@@ -71,12 +74,15 @@ public class Game implements Runnable {
                 e.printStackTrace();
             }
         }
+        
+        // loads highscores
+        scoreKeeper = new HighScoreKeeper();
     }
     
     /**
      * Redraws frame and container
      */
-    public void redraw() {
+    private void redraw() {
         container.revalidate();
         container.repaint();
         frame.pack();
@@ -123,13 +129,21 @@ public class Game implements Runnable {
         });
         menu.add(instructions);
         
+        JButton highScores = new JButton("High Scores");
+        highScores.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showHighScores();
+            }
+        });
+        menu.add(highScores);
+        
         redraw();
     }
     
     /**
      * Displays the levels available
      */
-    public void levelSelect() {
+    private void levelSelect() {
         
         // reset container
         container.removeAll();
@@ -178,7 +192,7 @@ public class Game implements Runnable {
      * Creates game depending on the level
      * @param level
      */
-    public void showGame(int level) {
+    private void showGame(int level) {
         
         // reset container
         container.removeAll();
@@ -207,7 +221,7 @@ public class Game implements Runnable {
     /**
      * Displays instructions for the game
      */
-    public void showInstructions() {
+    private void showInstructions() {
         
         // reset container
         container.removeAll();
@@ -233,11 +247,64 @@ public class Game implements Runnable {
         // display instructions
         JPanel instructionsPanel = new JPanel();
         container.add(instructionsPanel, BorderLayout.CENTER);
+        instructionsPanel.setLayout(new GridLayout(0, 1));
         
-        JLabel instructionsLabel = new JLabel(instructions);
-        instructionsPanel.add(instructionsLabel);
+        for (String nextString : instructions) {
+            JLabel instructionsLabel = new JLabel(nextString);
+            instructionsPanel.add(instructionsLabel);
+            JLabel blank = new JLabel("");
+            instructionsPanel.add(blank);
+        }
         
         redraw();
+    }
+    
+    /**
+     * Displays highscores for the game
+     */
+    private void showHighScores() {
+        
+        // reset container
+        container.removeAll();
+        container.setLayout(new BorderLayout());
+        
+        // display title
+        JPanel header = new JPanel();
+        container.add(header, BorderLayout.NORTH);
+        
+        JLabel titleLabel = new JLabel("HighScores (Level 3)");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        titleLabel.setForeground(Color.darkGray);
+        header.add(titleLabel);
+        
+        JButton menuButton = new JButton("Menu");
+        menuButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                showMenu();
+            }
+        });
+        header.add(menuButton);
+        
+        // display highscores
+        JPanel highScorePanel = new JPanel();
+        highScorePanel.setLayout(new GridLayout(0, 1));
+        container.add(highScorePanel, BorderLayout.CENTER);
+        
+        List<HighScore> scores = scoreKeeper.getScores();
+        
+        for (int i = 0; i < scores.size(); i++) {
+            JLabel scoreLabel = new JLabel((i + 1) + ": " + scores.get(i));
+            highScorePanel.add(scoreLabel);
+        }
+        
+        redraw();
+    }
+    
+    /**
+     * getter for scoreKeeper
+     */
+    public HighScoreKeeper getScoreKeeper() {
+        return scoreKeeper;
     }
     
     /**

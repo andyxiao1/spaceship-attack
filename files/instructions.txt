@@ -1,6 +1,9 @@
-These are instructions
-
-Asteroid
-Coin
-Enemy Ship
-User Ship
+You are a spaceship (Red Block)
+Your goal is to complete the levels and get as many coins as possible
+Make sure you still have health
+Move with the arrow keys (Up, Down, Left, Right)
+Shoot Asteroids and Enemy Ships with the Space Bar
+Asteroids (Black Circles) do damage on collision
+Enemy Ships (Blue Ovals) do damage on collision and shoot lasers
+CAUTION: Asteroids and Enemy Ships get stronger in level 3
+Highscores are determined by the most number of coins on level 3

@@ -152,7 +152,7 @@ public class SpaceGameCourt extends JPanel {
     /**
      * Called by tick(), moves user lasers and implements proper game logic
      */
-    public void updateUserLasers() {
+    private void updateUserLasers() {
         for (int i = 0; i < userLasers.size(); i++) {
             Laser nextLaser = userLasers.get(i);
             nextLaser.move();
@@ -187,18 +187,27 @@ public class SpaceGameCourt extends JPanel {
     public void gameOver(boolean didWin) {
         gameTimer.stop();
         projTimer.stop();
+        int coins = ship.getCoins();
         
-        String output = (didWin ? "You Won!" : "You Lost :(") + "\nCoins: " + ship.getCoins();
-
-        if (level == 3) {
-            //TODO check highscore, update, ask for name
+        if (didWin && isHighScore()) {
+            JOptionPane.showMessageDialog(null, "HIGHSCORE!" + "\nCoins: " + coins);
+            String name = JOptionPane.showInputDialog("Name: ");
+            String quote = JOptionPane.showInputDialog("Quote: ");
+            
+            name = (name == null || name.equals("")) ? "Guest" : name;
+            quote = (quote == null || quote.equals("")) ? "No Comment" : quote;
+            
+            game.getScoreKeeper().addScore(new HighScore(coins, name, quote));
         } else {
+            String output = (didWin ? "You Won!" : "You Lost :(") + "\nCoins: " + coins;
             JOptionPane.showMessageDialog(null, output);
-            game.showMenu();
         }
         
-        //JOptionPane.showMessageDialog(null, output);
-        //JOptionPane.showInputDialog("Name: ");
+        game.showMenu();
+    }
+    
+    private boolean isHighScore() {
+        return level == 3 && game.getScoreKeeper().isHighScore(ship.getCoins());
     }
     
     /**
