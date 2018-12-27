@@ -1,6 +1,6 @@
 # Spaceship Attack
-This is a spaceship shooter game that I made for my CIS 120 final project  
-It includes an intro screen, level select, instructions, and highscores.  
+This is a spaceship shooter game that I made with Java Swing for my CIS 120 final project  
+It includes an intro screen, level select, instructions, and highscores   
   
 ## How to Play
 * Move the spaceship (aka the red block) with your arrow keys
