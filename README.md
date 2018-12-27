@@ -4,7 +4,7 @@ It includes an intro screen, level select, instructions, and highscores
   
 ## How to Play
 * Move the spaceship (aka the red block) with your arrow keys
-* Shoot lasers with the space bar
+* Shoot lasers (aka green lines) with the space bar
 * Kill enemies (aka blue ovals) by shooting them down
 * Collect coins (aka yellow circles)
 * Avoid or shoot down asteroids (aka black circles)
