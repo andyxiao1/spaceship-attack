@@ -13,8 +13,8 @@ It includes an intro screen, level select, instructions, and highscores
   
 To play the game just run the game file in eclipse
 
-![Intro](/home.png)
-![Level Select](/level-select.png)
-![Gameplay](/gameplay.png)
-![Instructions](/instructions.png)
-![Highscores](/highscores.png)
+![Intro](/home.png)  
+![Level Select](/level-select.png)  
+![Gameplay](/gameplay.png)  
+![Instructions](/instructions.png)  
+![Highscores](/highscores.png)  
