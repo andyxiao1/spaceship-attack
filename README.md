@@ -12,9 +12,18 @@ It includes an intro screen, level select, instructions, and highscores
 * High scores are determined by the number of coins you collect on level 3
   
 To play the game just run the game file in eclipse
-
-![Intro](/home.png)  
+  
+Home Screen  
+![Intro](/home.png)
+  
+Level Select  
 ![Level Select](/level-select.png)
+  
+Gameplay  
 ![Gameplay](/gameplay.png)
+  
+Instructions  
 ![Instructions](/instructions.png)
+  
+Highscores  
 ![Highscores](/highscores.png)
